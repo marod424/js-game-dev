@@ -1,4 +1,4 @@
-let playerState = 'fall';
+let playerState = 'idle';
 
 const dropdown = document.getElementById('animations');
 dropdown.addEventListener('change', function(e) {
