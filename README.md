@@ -1,3 +1,4 @@
 # js-game-dev
 
-1. animations
+1. sprite animations
+2. parallax backgrounds
