@@ -1,0 +1,18 @@
+#container {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 100px);
+  height: calc(100% - 100px);
+}
+
+#canvas1, #canvas2, #canvas3, #canvas4 {
+  position: relative;
+  border: 3px solid black;
+  width: 420px;
+  height: 840px;
+}
