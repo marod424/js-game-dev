@@ -5,3 +5,4 @@
 3. enemy movement patterns
 4. trigger animations
 5. point & shoot game
+6. enemy variety
