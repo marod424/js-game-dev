@@ -5,42 +5,21 @@ window.addEventListener('load', function() {
   canvas.width = 800;
   canvas.height = 720;
 
-  let pause = false;
-  const pauseBtn = document.getElementById('pauseBtn');
-  pauseBtn.addEventListener('click', function() {
-    pause = !pause;
-    pauseBtn.innerHTML = !pause ? 'Pause' : 'Play';
-    if (!pause) animate(0);
-  });
-
-  let gameOver = false;
+  const ARROW_KEYS = ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'];
 
   class InputHandler {
     constructor() {
       this.keys = [];
 
       window.addEventListener('keydown', e => {
-        if ((
-          e.key === 'ArrowDown' || 
-          e.key === 'ArrowUp' || 
-          e.key === 'ArrowLeft' || 
-          e.key === 'ArrowRight') && 
-          this.keys.indexOf(e.key) === -1
-        ) {
-          this.keys.push(e.key);
-        }
+        if (ARROW_KEYS.includes(e.key) && this.keys.indexOf(e.key) === -1) this.keys.push(e.key)
+        else if (e.key === 'Enter' && gameOver) restartGame();
+        else if (e.key === ' ') pauseGame();
       });
 
       
       window.addEventListener('keyup', e => {
-        if (
-          e.key === 'ArrowDown' || 
-          e.key === 'ArrowUp' || 
-          e.key === 'ArrowLeft' || 
-          e.key === 'ArrowRight'
-        ) {
-          this.keys.splice(this.keys.indexOf(e.key), 1);
-        }
+        if (ARROW_KEYS.includes(e.key)) this.keys.splice(this.keys.indexOf(e.key), 1);
       });
     }
   }
@@ -134,6 +113,13 @@ window.addEventListener('load', function() {
     onGround() {
       return this.y >= this.gameHeight - this.height;
     }
+
+    restart() {
+      this.x = 100;
+      this.y = this.gameHeight - this.height;
+      this.maxFrame = 8;
+      this.frameY = 0;
+    }
   }
 
   class Background {
@@ -156,6 +142,10 @@ window.addEventListener('load', function() {
     update() {
       this.x -= this.speed;
       if (this.x < 0 - this.width) this.x = 0;
+    }
+
+    restart() {
+      this.x = 0;
     }
   }
 
@@ -208,7 +198,10 @@ window.addEventListener('load', function() {
     }
   }
 
+  let pause = false;
+  let gameOver = false;
   let enemies = [];
+  let score = 0;
   let enemyTimer = 0;
   let enemyInterval = 1000;
   let randomEnemyInterval = Math.random() * 1000 + 500;
@@ -216,7 +209,6 @@ window.addEventListener('load', function() {
   function handleEnemies(ctx, deltatime) {
     if (enemyTimer > enemyInterval + randomEnemyInterval) {
       enemies.push(new Enemy(canvas.width, canvas.height));
-      console.log(enemies)
       randomEnemyInterval = Math.random() * 1000 + 500;
       enemyTimer = 0;
     } else {
@@ -231,11 +223,11 @@ window.addEventListener('load', function() {
     enemies = enemies.filter(enemy => !enemy.markedForDeletion);
   }
 
-  let score = 0;
 
   function displayStatusText(context) {
-    context.fillStyle = 'black';
+    context.textAlign = 'left';
     context.font = '40px Helvetica';
+    context.fillStyle = 'black';
     context.fillText('Score: ' + score, 20, 50);
     context.fillStyle = 'white';
     context.fillText('Score: ' + score, 22, 52);
@@ -243,9 +235,44 @@ window.addEventListener('load', function() {
     if (gameOver) {
       context.textAlign = 'center';
       context.fillStyle = 'black';
-      context.fillText('GAME OVER, try again!', canvas.width*0.5, 200);
+      context.fillText('GAME OVER, press ENTER to restart!', canvas.width*0.5, 200);
       context.fillStyle = 'white';
-      context.fillText('GAME OVER, try again!', canvas.width*0.5 + 2, 202);
+      context.fillText('GAME OVER, press ENTER to restart!', canvas.width*0.5 + 2, 202);
+    }
+
+    if (pause) {
+      context.textAlign = 'center';
+      context.fillStyle = 'black';
+      context.font = '60px Helvetica';
+      context.fillText('| |', canvas.width*0.5, 200);
+      context.fillStyle = 'white';
+      context.fillText('| |', canvas.width*0.5 + 2, 202); 
+    }
+  } 
+  
+  function restartGame() {
+    player.restart();
+    background.restart();
+    enemies = [];
+    score = 0;
+    gameOver = false;
+    animate(0);
+  }
+
+  function pauseGame() {
+    pause = !pause;
+    if (!pause) animate(0);
+  }
+
+  const fullscreenButton = document.getElementById('fullscreenButton');
+
+  fullscreenButton.addEventListener('click', toggleFullScreen);
+
+  function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+      canvas.requestFullscreen().catch(err => alert(err.message));
+    } else {
+      document.exitFullscreen();
     }
   }
 
