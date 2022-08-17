@@ -45,11 +45,10 @@ window.addEventListener('load', function() {
     }
 
     draw(context) {
-      // hit boxes for collision detection
+      // hit box for collision detection
       // context.strokeStyle = 'white';
-      // context.strokeRect(this.x, this.y, this.width, this.height);
       // context.beginPath();
-      // context.arc(this.x + this.width*0.5, this.y + this.height*0.5, this.width*0.5, 0, Math.PI*2);
+      // context.arc(this.x + this.width*0.5 + 10, this.y + this.height*0.5 + 20, this.width*0.35, 0, Math.PI*2);
       // context.stroke();
 
       context.drawImage(this.image, this.frameX * this.width, this.frameY * this.height, this.width, this.height, this.x, this.y, this.width, this.height);
@@ -58,10 +57,10 @@ window.addEventListener('load', function() {
     update(input, deltatime, enemies) {
       // collision detection
       enemies.forEach(enemy => {
-        const dx = (enemy.x + enemy.width*0.5) - (this.x + this.width*0.5);
-        const dy = (enemy.y + enemy.height*0.5) - (this.y + this.height*0.5);
+        const dx = (enemy.x + enemy.width*0.5 - 25) - (this.x + this.width*0.5 + 10);
+        const dy = (enemy.y + enemy.height*0.5) - (this.y + this.height*0.5 + 20);
         const distance = Math.sqrt(dx*dx + dy*dy);
-        if (distance < enemy.width*0.5 + this.width*0.5) {
+        if (distance < enemy.width*0.4 + this.width*0.35) {
           gameOver = true;
         }
       });
@@ -170,9 +169,8 @@ window.addEventListener('load', function() {
     draw(context) {
       // hit boxes for collision detection
       // context.strokeStyle = 'white';
-      // context.strokeRect(this.x, this.y, this.width, this.height);
       // context.beginPath();
-      // context.arc(this.x + this.width*0.5, this.y + this.height*0.5, this.width*0.5, 0, Math.PI*2);
+      // context.arc(this.x + this.width*0.5 - 25, this.y + this.height*0.5, this.width*0.4, 0, Math.PI*2);
       // context.stroke();
 
       context.drawImage(this.image, this.frameX * this.width, 0, this.width, this.height, this.x, this.y, this.width, this.height);
@@ -265,7 +263,6 @@ window.addEventListener('load', function() {
   }
 
   const fullscreenButton = document.getElementById('fullscreenButton');
-
   fullscreenButton.addEventListener('click', toggleFullScreen);
 
   function toggleFullScreen() {
