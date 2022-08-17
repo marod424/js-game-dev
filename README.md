@@ -7,3 +7,4 @@
 5. point & shoot game
 6. enemy variety
 7. side scroller game
+8. state management
