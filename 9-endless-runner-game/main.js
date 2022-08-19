@@ -15,18 +15,22 @@ window.addEventListener('load', function() {
     constructor(width, height) {
       this.width = width;
       this.height = height;
-      this.groundMargin = 50;
+      this.groundMargin = 80;
       this.speed = 0;
       this.maxSpeed = 3;
       this.isPaused = false;
-      this.debug = true;
+      this.debug = false;
       this.enemies = [];
       this.particles = [];
+      this.collisions = [];
       this.maxParticles = 200;
       this.enemyTimer = 0;
       this.enemyInterval = 1000;
       this.score = 0;
       this.fontColor = 'black';
+      this.time = 0;
+      this.maxTime = 10000;
+      this.gameOver = false;
       this.background = new Background(this);
       this.player = new Player(this);
       this.input = new InputHandler(this);
@@ -34,6 +38,9 @@ window.addEventListener('load', function() {
     }
 
     update(deltatime) {
+      this.time += deltatime;
+      if (this.time > this.maxTime) this.gameOver = true;
+
       this.background.update();
       this.player.update(this.input.keys, deltatime);
       
@@ -56,8 +63,14 @@ window.addEventListener('load', function() {
       });
 
       if (this.particles.length > this.maxParticles) {
-        this.particles = this.particles.slice(0, this.maxParticles);
+        this.particles.length = this.maxParticles;
       }
+
+      // handle collisions
+      this.collisions.forEach((collision, index) => {
+        collision.update(deltatime);
+        if (collision.markedForDeletion) this.collisions.splice(index, 1);
+      })
     }
 
     draw(context) {
@@ -65,6 +78,7 @@ window.addEventListener('load', function() {
       this.player.draw(context);
       this.enemies.forEach(enemy => enemy.draw(context));
       this.particles.forEach(particle => particle.draw(context));
+      this.collisions.forEach(collision => collision.draw(context));
       this.ui.draw(context);
     }
 
@@ -91,7 +105,7 @@ window.addEventListener('load', function() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     game.update(deltatime);
     game.draw(ctx);
-    if (!game.isPaused) requestAnimationFrame(animate);
+    if (!game.isPaused && !game.gameOver) requestAnimationFrame(animate);
   }
 
   animate(0);

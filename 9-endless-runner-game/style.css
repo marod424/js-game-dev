@@ -28,6 +28,7 @@ body {
 #fly,
 #plant,
 #spider_big,
-#fire {
+#fire,
+#boom {
   display: none;
 }

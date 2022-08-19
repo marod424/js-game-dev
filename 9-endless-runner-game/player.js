@@ -1,4 +1,5 @@
-import { states, Sitting, Running, Jumping, Falling, Rolling } from './playerState.js';
+import CollisionAnimation from './collisionAnimation.js';
+import { states, Sitting, Running, Jumping, Falling, Rolling, Diving, Hit } from './playerState.js';
 
 export default class Player {
   constructor(game) {
@@ -24,6 +25,8 @@ export default class Player {
       new Jumping(this),
       new Falling(this),
       new Rolling(this),
+      new Diving(this),
+      new Hit(this),
     ];
     this.currentState = this.states[states.SITTING];
     this.currentState.enter();
@@ -35,8 +38,8 @@ export default class Player {
 
     // horizontal movement
     this.x += this.speed;
-    if (input.includes('ArrowRight')) this.speed = this.maxSpeed;
-    else if (input.includes('ArrowLeft')) this.speed = -this.maxSpeed;
+    if (input.includes('ArrowRight') && this.currentState !== this.states[states.HIT]) this.speed = this.maxSpeed;
+    else if (input.includes('ArrowLeft') && this.currentState !== this.states[states.HIT]) this.speed = -this.maxSpeed;
     else this.speed = 0;
 
     // horizontal boundry
@@ -47,6 +50,10 @@ export default class Player {
     this.y += this.vy;
     if (!this.onGround()) this.vy += this.weight;
     else this.vy = 0;
+
+    // vertical boundry
+    const groundBoundry = this.game.height - this.height - this.game.groundMargin;
+    if (this.y > groundBoundry) this.y = groundBoundry;
 
     // sprite animation
     if (this.frameTimer > this.frameInterval) {
@@ -85,11 +92,19 @@ export default class Player {
         enemy.y < this.y + this.height &&
         enemy.y + enemy.height > this.y
       ) {
-        // collision detected
         enemy.markedForDeletion = true;
-        this.game.score++;
-      } else {
-        // no collision
+
+        this.game.collisions.push(
+          new CollisionAnimation(this.game, enemy.x + enemy.width*0.5, enemy.y + enemy.height*0.5)
+        );
+        
+        if (
+          this.currentState === this.states[states.ROLLING] || 
+          this.currentState === this.states[states.DIVING]
+        ) {
+          this.game.score++;
+        }
+        else this.setState(states.HIT);
       }
     });
   }
