@@ -19,6 +19,14 @@ body {
   max-height: 100%;
 }
 
-#player, #layer1, #layer2, #layer3, #layer4, #layer5 {
+#player, 
+#layer1, 
+#layer2, 
+#layer3, 
+#layer4, 
+#layer5,
+#fly,
+#plant,
+#spider_big {
   display: none;
 }
