@@ -27,6 +27,7 @@ body {
 #layer5,
 #fly,
 #plant,
-#spider_big {
+#spider_big,
+#fire {
   display: none;
 }
