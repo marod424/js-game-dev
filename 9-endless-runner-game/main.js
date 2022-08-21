@@ -8,7 +8,7 @@ window.addEventListener('load', function() {
   /** @type {HTMLCanvasElement} */
   const canvas = document.getElementById('canvas1');
   const ctx = canvas.getContext('2d');
-  canvas.width = 500;
+  canvas.width = 900;
   canvas.height = 500;
 
   class Game {
@@ -28,9 +28,10 @@ window.addEventListener('load', function() {
       this.enemyTimer = 0;
       this.enemyInterval = 1000;
       this.score = 0;
+      this.winningScore = 40;
       this.fontColor = 'black';
       this.time = 0;
-      this.maxTime = 10000;
+      this.maxTime = 30000;
       this.gameOver = false;
       this.lives = 5;
       this.background = new Background(this);
